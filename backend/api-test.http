@@ -1,0 +1,110 @@
+### Uji API pakai ekstensi VS Code "REST Client" (atau salin ke Postman)
+@base = http://localhost:3000/api
+@token = isi_token_dari_login
+
+### Login
+POST {{base}}/auth/login
+Content-Type: application/json
+
+{ "email": "budi@mail.com", "password": "user123" }
+
+### Register
+POST {{base}}/auth/register
+Content-Type: application/json
+
+{ "name": "Siti", "email": "siti@mail.com", "password": "rahasia1", "phone": "08123456789" }
+
+### Profil saya
+GET {{base}}/auth/me
+Authorization: Bearer {{token}}
+
+### Daftar hotel (filter opsional)
+GET {{base}}/hotels?city=Surabaya&guests=2&sort=price_asc
+
+### Daftar kota
+GET {{base}}/hotels/cities
+
+### Detail hotel + ketersediaan kamar
+GET {{base}}/hotels/1?check_in=2026-12-20&check_out=2026-12-22
+
+### Cek ketersediaan 1 tipe kamar
+GET {{base}}/rooms/1/availability?check_in=2026-12-20&check_out=2026-12-22
+
+### Buat booking
+POST {{base}}/bookings
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "room_id": 1, "check_in": "2026-12-20", "check_out": "2026-12-22", "guests": 2, "rooms": 1, "guest_name": "Budi Santoso", "guest_phone": "081200000002" }
+
+### Pesanan saya
+GET {{base}}/bookings
+Authorization: Bearer {{token}}
+
+### Buat tagihan Virtual Account (bank: BCA/BNI/BRI/MANDIRI)
+POST {{base}}/bookings/1/payment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "method": "va", "bank": "BCA" }
+
+### Atau buat tagihan QRIS
+POST {{base}}/bookings/1/payment
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "method": "qris" }
+
+### Konfirmasi bayar (simulasi) -> status paid + nomor bukti pembayaran
+PATCH {{base}}/bookings/1/pay
+Authorization: Bearer {{token}}
+
+### Hotel disukai
+GET {{base}}/favorites
+Authorization: Bearer {{token}}
+
+### Tambah ke disukai
+POST {{base}}/hotels/1/favorite
+Authorization: Bearer {{token}}
+
+### Hapus dari disukai
+DELETE {{base}}/hotels/1/favorite
+Authorization: Bearer {{token}}
+
+### Batalkan
+PATCH {{base}}/bookings/1/cancel
+Authorization: Bearer {{token}}
+
+### Ulasan
+POST {{base}}/hotels/1/reviews
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{ "booking_id": 1, "rating": 5, "comment": "Kamar bersih, staf ramah" }
+
+### [Admin] Statistik (login pakai admin@stayease.id dulu)
+GET {{base}}/admin/stats
+Authorization: Bearer {{token}}
+
+
+### ===== ADMIN (login pakai admin@stayease.id, isi @token dengan token admin) =====
+
+### Dashboard
+GET {{base}}/admin/stats
+Authorization: Bearer {{token}}
+
+### Semua pesanan (filter opsional)
+GET {{base}}/admin/bookings?status=paid&q=Budi
+Authorization: Bearer {{token}}
+
+### Kamar yang terpesan pada tanggal tertentu
+GET {{base}}/admin/rooms/booked?date=2026-12-20
+Authorization: Bearer {{token}}
+
+### Semua ulasan
+GET {{base}}/admin/reviews?rating=5
+Authorization: Bearer {{token}}
+
+### Ulasan saya (login sebagai user)
+GET {{base}}/reviews/me
+Authorization: Bearer {{token}}
